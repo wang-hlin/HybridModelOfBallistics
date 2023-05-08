@@ -1,20 +1,11 @@
 import operator
-
 import random
 
-
 import numpy as np
-
-from deap import algorithms
-from deap import base
-from deap import creator
-from deap import tools
-from deap import gp
-
-from prepdata import hybridmodeldataprep, hybridmodeltest
 import pandas as pd
+from deap import algorithms, base, creator, gp, tools
 from deapcalc import *
-
+from prepdata import hybridmodeldataprep, hybridmodeltest
 
 print(
     'Training data files should be in folder "data", files to fillin should be in the subfolder "fillin"'
@@ -30,14 +21,15 @@ raw_data = pd.concat(
     (pd.read_csv("./data/" + files) for files in input_files), ignore_index=True
 )
 
-fillin_name = str(
-    input(
-        "file names to fill in, if multiple files separate with comma(e.g. 6.5mm.csv, Remington.csv): "
+if_fillin = str(input("Do you want to use this model to fill your template?(Y/N)"))
+if if_fillin in ["y", "Y"]:
+    fillin_name = str(
+        input(
+            "file names to fill in, if multiple files separate with comma(e.g. 6.5mm.csv, Remington.csv): "
+        )
     )
-)
-fillin_files = fillin_name.split(",")
-fillin_files = [i.strip() for i in fillin_files]
-
+    fillin_files = fillin_name.split(",")
+    fillin_files = [i.strip() for i in fillin_files]
 
 np_train, np_target, scaler = hybridmodeldataprep(raw_data)
 
@@ -153,11 +145,17 @@ def main():
 if __name__ == "__main__":
     pop, log, hof = main()
 
-print("\nBest Hof:\n%s" % hof[0])
+print("\nBest Symbolic Regression function:\n%s" % hof[0])
+print("=================================================================")
 
-for files in fillin_files:
-    fillin_data = pd.read_csv("./data/fillin/" + files)
-    v_pred, v_real = hybridmodeltest(fillin_data, scaler, hof[0])
-    df = pd.DataFrame(v_pred, columns=["V_predict"])
-    fillin_data["V"] = df["V_predict"]
-    fillin_data.to_csv("./data/fillin/" + files + "_predict.csv")
+if if_fillin in ["y", "Y"]:
+    for files in fillin_files:
+        fillin_data = pd.read_csv("./data/fillin/" + files)
+        v_pred, v_real = hybridmodeltest(fillin_data, scaler, hof[0])
+        df = pd.DataFrame(v_pred, columns=["V_predict"])
+        fillin_data["V"] = df["V_predict"]
+        fillin_data.to_csv("./data/fillin/" + files + "_predict.csv")
+        print("file "+ files + "_predict.csv has been generated!")
+
+print("=================================================================")
+print("Script executed! You may save your function and close the script.")

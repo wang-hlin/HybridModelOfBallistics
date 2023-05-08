@@ -145,7 +145,7 @@ def main():
 if __name__ == "__main__":
     pop, log, hof = main()
 
-print("\nBest Hof:\n%s" % hof[0])
+print("\nBest Symbolic Regression function:\n%s" % hof[0])
 
 
 print("========================================")

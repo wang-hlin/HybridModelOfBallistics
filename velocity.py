@@ -1,7 +1,7 @@
 import math
-from cdg import cdg1
 
 import numpy as np
+from cdg import cdg1
 
 
 def velocity_eqxyz(
