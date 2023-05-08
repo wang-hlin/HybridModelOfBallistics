@@ -1,10 +1,9 @@
 import math
 from cdg import cdg1
 
-
 import numpy as np
 
-# 把这段里的v改成numpy array
+
 def velocity_eqxyz(
     v, wv, t, t_gap, mass, diameter, distance, bc=-1, rho=0.07967, g=32.17404855643
 ):
@@ -68,5 +67,5 @@ def velocityatdistance(
         )
         v = new_v
         d.append(np.divide(distance_now, 3))
-        v_list.append(math.sqrt(v[0]**2 + v[1]**2 + v[2]**2))
+        v_list.append(math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2))
     return v_list, d

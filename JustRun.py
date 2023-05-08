@@ -16,18 +16,27 @@ import pandas as pd
 from deapcalc import *
 
 
-print('Training data files should be in folder \"data\", files to fillin should be in the subfolder \"fillin\"')
-file_name = str(input('put file names for training here, if multiple files separate with comma(e.g. 6.5mm.csv, Remington.csv): '))
-input_files = file_name.split(',')
+print(
+    'Training data files should be in folder "data", files to fillin should be in the subfolder "fillin"'
+)
+file_name = str(
+    input(
+        "put file names for training here, if multiple files separate with comma(e.g. 6.5mm.csv, Remington.csv): "
+    )
+)
+input_files = file_name.split(",")
 input_files = [i.strip() for i in input_files]
-raw_data = pd.concat((pd.read_csv("./data/" + files) for files in input_files), ignore_index=True)
+raw_data = pd.concat(
+    (pd.read_csv("./data/" + files) for files in input_files), ignore_index=True
+)
 
-fillin_name = str(input('file names to fill in, if multiple files separate with comma(e.g. 6.5mm.csv, Remington.csv): '))
-fillin_files = fillin_name.split(',')
+fillin_name = str(
+    input(
+        "file names to fill in, if multiple files separate with comma(e.g. 6.5mm.csv, Remington.csv): "
+    )
+)
+fillin_files = fillin_name.split(",")
 fillin_files = [i.strip() for i in fillin_files]
-
-
-
 
 
 np_train, np_target, scaler = hybridmodeldataprep(raw_data)
@@ -50,9 +59,16 @@ pset.addPrimitive(div2, 1)
 pset.addEphemeralConstant("rand101", lambda: random.randint(-1, 1))
 
 
-pset.renameArguments(ARG0='D', ARG1='BC', ARG2='Weight', ARG3='boattail', ARG4='roundtip', ARG5='cannelure',
-                         ARG6='IV', ARG7='Veom')
-
+pset.renameArguments(
+    ARG0="D",
+    ARG1="BC",
+    ARG2="Weight",
+    ARG3="boattail",
+    ARG4="roundtip",
+    ARG5="cannelure",
+    ARG6="IV",
+    ARG7="Veom",
+)
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -77,9 +93,15 @@ def evaluate(individual):
 
     for data, tar in zip(np_train, np_target):
 
-        output = func(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7])
-        output_h1 = func(data[0] + h, data[1], data[2], data[3], data[4], data[5], data[6], data[7])
-        output_h0 = func(data[0] - h, data[1], data[2], data[3], data[4], data[5], data[6], data[7])
+        output = func(
+            data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]
+        )
+        output_h1 = func(
+            data[0] + h, data[1], data[2], data[3], data[4], data[5], data[6], data[7]
+        )
+        output_h0 = func(
+            data[0] - h, data[1], data[2], data[3], data[4], data[5], data[6], data[7]
+        )
         dv2 = (output_h1 + output_h0 - 2 * output) / (h ** 2)
         if data[0] == 0 and output == tar:
             sum_ += (tar - output) ** 2 / 1e8
@@ -136,8 +158,6 @@ print("\nBest Hof:\n%s" % hof[0])
 for files in fillin_files:
     fillin_data = pd.read_csv("./data/fillin/" + files)
     v_pred, v_real = hybridmodeltest(fillin_data, scaler, hof[0])
-    df = pd.DataFrame(v_pred, columns=['V_predict'])
-    fillin_data['V'] = df['V_predict']
-    fillin_data.to_csv('./data/fillin/'+ files + '_predict.csv')
-
-
+    df = pd.DataFrame(v_pred, columns=["V_predict"])
+    fillin_data["V"] = df["V_predict"]
+    fillin_data.to_csv("./data/fillin/" + files + "_predict.csv")

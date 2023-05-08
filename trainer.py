@@ -15,8 +15,11 @@ from prepdata import hybridmodeldataprep, hybridmodeltest
 import pandas as pd
 from deapcalc import *
 
+
 def arg_parse():
-    parser = argparse.ArgumentParser(description="Dataset for Hybrid Model of Ballistics")
+    parser = argparse.ArgumentParser(
+        description="Dataset for Hybrid Model of Ballistics"
+    )
     parser.add_argument("--cfg", required=True, help="path to config file", type=str)
     parser.add_argument("--test", required=True, help="path to test file", type=str)
 
@@ -48,9 +51,16 @@ pset.addPrimitive(div2, 1)
 pset.addEphemeralConstant("rand101", lambda: random.randint(-1, 1))
 
 
-pset.renameArguments(ARG0='D', ARG1='BC', ARG2='Weight', ARG3='boattail', ARG4='roundtip', ARG5='cannelure',
-                         ARG6='IV', ARG7='Veom')
-
+pset.renameArguments(
+    ARG0="D",
+    ARG1="BC",
+    ARG2="Weight",
+    ARG3="boattail",
+    ARG4="roundtip",
+    ARG5="cannelure",
+    ARG6="IV",
+    ARG7="Veom",
+)
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -75,9 +85,15 @@ def evaluate(individual):
 
     for data, tar in zip(np_train, np_target):
 
-        output = func(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7])
-        output_h1 = func(data[0] + h, data[1], data[2], data[3], data[4], data[5], data[6], data[7])
-        output_h0 = func(data[0] - h, data[1], data[2], data[3], data[4], data[5], data[6], data[7])
+        output = func(
+            data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]
+        )
+        output_h1 = func(
+            data[0] + h, data[1], data[2], data[3], data[4], data[5], data[6], data[7]
+        )
+        output_h0 = func(
+            data[0] - h, data[1], data[2], data[3], data[4], data[5], data[6], data[7]
+        )
         dv2 = (output_h1 + output_h0 - 2 * output) / (h ** 2)
         if data[0] == 0 and output == tar:
             sum_ += (tar - output) ** 2 / 1e8
@@ -133,7 +149,7 @@ print("\nBest Hof:\n%s" % hof[0])
 
 
 print("========================================")
-print('rmse on test data set is:')
+print("rmse on test data set is:")
 v_pred, v_real = hybridmodeltest(raw_data, scaler, hof[0])
 rmse = np.sqrt(np.mean((v_pred - v_real) ** 2))
 print(rmse)
